@@ -5,6 +5,12 @@ services:
       - "8080:8080"
     environment:
       - APP_ENV=development
+      - GO_ENV=development
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=user
+      - DB_PASSWORD=password
+      - DB_NAME=login_db
     depends_on:
       db:
         condition: service_healthy
@@ -14,6 +20,7 @@ services:
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
+      POSTGRES_DB: login_db
     ports:
       - "5432:5432"
     healthcheck:
