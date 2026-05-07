@@ -24,7 +24,7 @@ func main() {
 		port = "8080"
 	}
 
-	r.HandleFunc("/healthz", HealthCheckHandler).Methods(http.MethodGet)
+	r.HandleFunc("/health", HealthCheckHandler).Methods(http.MethodGet)
 
 	fmt.Println("Server is running on http://localhost:" + port)
 	http.ListenAndServe(":"+port, r)
