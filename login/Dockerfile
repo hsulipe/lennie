@@ -7,7 +7,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o login .
+RUN CGO_ENABLED=0 GOOS=linux go build -o login ./cmd
 
 FROM alpine:latest
 ENV APP_PORT=$PORT
