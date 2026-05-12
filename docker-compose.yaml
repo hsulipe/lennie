@@ -25,7 +25,7 @@ services:
       db:
         condition: service_healthy
       dex:
-        condition: service_started
+        condition: service_healthy
 
   db:
     image: postgres:15-alpine
@@ -61,4 +61,10 @@ services:
       - "8081:5556"
     volumes:
       - ./dex/config.yaml:/etc/dex/config.yaml:ro
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:5556/dex/.well-known/openid-configuration"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
     restart: unless-stopped

@@ -14,12 +14,6 @@ connectors:
     id: mock
     name: Mock (Google)
 
-  # Local password connector: shows a login form, closer to the real Google flow.
-  # Enabled via enablePasswordDB + staticPasswords below.
-  - type: local
-    id: local
-    name: Email & Password
-
 oauth2:
   skipApprovalScreen: true
   responseTypes:
