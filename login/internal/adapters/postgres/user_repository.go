@@ -34,6 +34,14 @@ func (r *UserRepository) FindUserByID(id string) (*domain.User, error) {
 	return &user, nil
 }
 
+func (r *UserRepository) FindUserByEmail(email string) (*domain.User, error) {
+	var user domain.User
+	if err := r.db.Where("email = ? AND deleted = false", email).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (r *UserRepository) IdentityExists(provider, providerID string) (bool, error) {
 	var identity domain.UserIdentity
 	err := r.db.Where("provider = ? AND provider_identifier = ? AND deleted = false", provider, providerID).

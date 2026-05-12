@@ -22,7 +22,10 @@ func (s *SignInService) SignIn(provider, providerID, credentials string) (*domai
 		return nil, errors.New("invalid credentials")
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(identity.CredentialsHash), []byte(credentials)); err != nil {
+	if identity.CredentialsHash == nil {
+		return nil, errors.New("invalid credentials")
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(*identity.CredentialsHash), []byte(credentials)); err != nil {
 		return nil, errors.New("invalid credentials")
 	}
 

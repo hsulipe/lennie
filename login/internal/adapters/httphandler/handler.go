@@ -5,17 +5,36 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/hsulipe/lennie/login/internal/services"
+	"golang.org/x/oauth2"
 )
 
 type Handler struct {
-	signIn      *services.SignInService
-	signUp      *services.SignUpService
-	dbConnected bool
+	signIn       *services.SignInService
+	signUp       *services.SignUpService
+	oidcService  *services.OIDCService
+	oidcConfig   *oauth2.Config
+	oidcVerifier *oidc.IDTokenVerifier
+	dbConnected  bool
 }
 
-func NewHandler(signIn *services.SignInService, signUp *services.SignUpService, dbConnected bool) *Handler {
-	return &Handler{signIn: signIn, signUp: signUp, dbConnected: dbConnected}
+func NewHandler(
+	signIn *services.SignInService,
+	signUp *services.SignUpService,
+	oidcService *services.OIDCService,
+	oidcConfig *oauth2.Config,
+	oidcVerifier *oidc.IDTokenVerifier,
+	dbConnected bool,
+) *Handler {
+	return &Handler{
+		signIn:       signIn,
+		signUp:       signUp,
+		oidcService:  oidcService,
+		oidcConfig:   oidcConfig,
+		oidcVerifier: oidcVerifier,
+		dbConnected:  dbConnected,
+	}
 }
 
 func (h *Handler) HealthCheck(w http.ResponseWriter, r *http.Request) {

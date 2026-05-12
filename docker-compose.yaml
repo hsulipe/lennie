@@ -11,9 +11,21 @@ services:
       - DB_USER=user
       - DB_PASSWORD=password
       - DB_NAME=login_db
+      # OIDC / OAuth settings — client credentials match dex/config.yaml staticClients
+      - OIDC_ISSUER=http://localhost:8081/dex
+      - OIDC_PROVIDER_URL=http://dex:5556/dex
+      - OIDC_CLIENT_ID=login-app
+      - OIDC_CLIENT_SECRET=login-app-secret
+      - OIDC_REDIRECT_URL=http://localhost:8080/auth/callback
+    # Allows the container to reach localhost:8081 (Dex) via the host machine.
+    # Required because the OIDC issuer URL uses localhost, not the Docker service name.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       db:
         condition: service_healthy
+      dex:
+        condition: service_started
 
   db:
     image: postgres:15-alpine
@@ -41,3 +53,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  dex:
+    image: dexidp/dex:latest
+    command: dex serve /etc/dex/config.yaml
+    ports:
+      - "8081:5556"
+    volumes:
+      - ./dex/config.yaml:/etc/dex/config.yaml:ro
+    restart: unless-stopped

@@ -1,0 +1,50 @@
+# Dex OIDC config — local mock for Google OAuth
+issuer: http://localhost:8081/dex
+
+storage:
+  type: memory
+
+web:
+  http: 0.0.0.0:5556
+
+connectors:
+  # Mock connector: auto-approves the OAuth flow with a fixed user identity.
+  # Use this in automated tests or when you just need a token without a login form.
+  - type: mockCallback
+    id: mock
+    name: Mock (Google)
+
+  # Local password connector: shows a login form, closer to the real Google flow.
+  # Enabled via enablePasswordDB + staticPasswords below.
+  - type: local
+    id: local
+    name: Email & Password
+
+oauth2:
+  skipApprovalScreen: true
+  responseTypes:
+    - code
+
+# Define the OAuth client that represents your login service.
+# Your app should use these credentials when initiating the OAuth flow.
+staticClients:
+  - id: login-app
+    secret: login-app-secret
+    name: Login App (local)
+    redirectURIs:
+      - http://localhost:8080/auth/callback
+
+# Enable the local password database so the login form works.
+enablePasswordDB: true
+
+# Test accounts — password for all users below is "password"
+staticPasswords:
+  - email: user@example.com
+    # bcrypt hash of "password"
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4u"
+    username: user
+    userID: "08a8684b-db88-4b73-90a9-3cd1661f5466"
+  - email: admin@example.com
+    hash: "$2a$10$2b2cU8CPhOTaGrs1HRQuAueS7JTT5ZHsHSzYiFPm1leZck7Mc8T4u"
+    username: admin
+    userID: "1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d"

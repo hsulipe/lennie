@@ -49,13 +49,14 @@ func (s *SignUpService) SignUp(input SignUpInput) (*domain.User, error) {
 		return nil, errors.New("invalid birthdate format, expected YYYY-MM-DD")
 	}
 
+	hashStr := string(hash)
 	user := &domain.User{
 		ID:        newUUID(),
 		Name:      input.Name,
 		Email:     input.Email,
-		CPF:       input.CPF,
-		Phone:     input.Phone,
-		Birthdate: birthdate,
+		CPF:       optStr(input.CPF),
+		Phone:     optStr(input.Phone),
+		Birthdate: &birthdate,
 	}
 
 	identity := &domain.UserIdentity{
@@ -63,7 +64,7 @@ func (s *SignUpService) SignUp(input SignUpInput) (*domain.User, error) {
 		UserID:          user.ID,
 		Provider:        input.Provider,
 		ProviderID:      input.ProviderID,
-		CredentialsHash: string(hash),
+		CredentialsHash: &hashStr,
 	}
 
 	if err := s.repo.CreateUserWithIdentity(user, identity); err != nil {
@@ -71,6 +72,13 @@ func (s *SignUpService) SignUp(input SignUpInput) (*domain.User, error) {
 	}
 
 	return user, nil
+}
+
+func optStr(s string) *string {
+	if s == "" {
+		return nil
+	}
+	return &s
 }
 
 func newUUID() string {

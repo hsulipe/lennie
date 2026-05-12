@@ -11,5 +11,7 @@ func NewRouter(h *Handler) *mux.Router {
 	r.HandleFunc("/health", h.HealthCheck).Methods(http.MethodGet)
 	r.HandleFunc("/signin", h.SignIn).Methods(http.MethodPost)
 	r.HandleFunc("/signup", h.SignUp).Methods(http.MethodPost)
+	r.HandleFunc("/auth/login", h.OIDCLogin).Methods(http.MethodGet)
+	r.HandleFunc("/auth/callback", h.OIDCCallback).Methods(http.MethodGet)
 	return r
 }
